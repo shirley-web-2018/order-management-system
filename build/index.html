@@ -24,9 +24,13 @@
       </div>
       <label>用户名<input id="username" autocomplete="username" value="admin" required /></label>
       <label>密码<input id="password" type="password" autocomplete="current-password" placeholder="请输入密码" required /></label>
+      <div class="login-options">
+        <label><input id="rememberPassword" type="checkbox" /><span>记住账号密码</span></label>
+        <label><input id="autoLogin30" type="checkbox" /><span>30天内免密登录</span></label>
+      </div>
       <p id="loginError" class="form-error" role="alert"></p>
       <button class="primary login-button" type="submit">进入系统 <span>→</span></button>
-      <p class="login-note">内部使用 · 数据保存在当前浏览器</p>
+      <p class="login-note">内部使用 · 登录设置仅保存在当前设备</p>
     </form>
   </section>
 
