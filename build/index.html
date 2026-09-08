@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="内部客户订单、合同、发票、发货、回款与反馈跟踪系统" />
+  <title>订单管理系统</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <section id="loginView" class="login-shell">
+    <div class="login-brand">
+      <div class="brand-mark">序</div>
+      <div>
+        <strong>订单管理系统</strong>
+        <span>客户业务全流程跟踪</span>
+      </div>
+    </div>
+    <form id="loginForm" class="login-card">
+      <div class="login-heading">
+        <span class="eyebrow">INTERNAL WORKSPACE</span>
+        <h1>欢迎回来</h1>
+        <p>登录后查看订单进度与今日待办。</p>
+      </div>
+      <label>用户名<input id="username" autocomplete="username" value="admin" required /></label>
+      <label>密码<input id="password" type="password" autocomplete="current-password" placeholder="请输入密码" required /></label>
+      <p id="loginError" class="form-error" role="alert"></p>
+      <button class="primary login-button" type="submit">进入系统 <span>→</span></button>
+      <p class="login-note">内部使用 · 数据保存在当前浏览器</p>
+    </form>
+  </section>
+
+  <div id="appView" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="brand-mark small">序</div><div><strong>订单管理</strong><span>业务工作台</span></div></div>
+      <nav id="mainNav">
+        <button class="nav-item active" data-view="dashboard"><span>⌂</span>工作台</button>
+        <button class="nav-item" data-view="orders"><span>▤</span>订单管理</button>
+        <button class="nav-item" data-view="customers"><span>◎</span>客户管理</button>
+        <button class="nav-item" data-view="reminders"><span>◇</span>待办提醒 <b id="navReminderCount">0</b></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="user-chip"><div class="avatar">管</div><div><strong>管理员</strong><span>admin</span></div></div>
+        <button id="logoutBtn" class="icon-button" title="退出登录">↪</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="menuBtn" class="mobile-menu" aria-label="打开菜单">☰</button>
+        <div><p id="dateLine"></p><h2 id="pageTitle">工作台</h2></div>
+        <div class="top-actions">
+          <div class="search-wrap"><span>⌕</span><input id="globalSearch" placeholder="搜索客户或订单编号" /></div>
+          <button id="newOrderTop" class="primary">＋ 新建订单</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section id="dashboardView" class="view-section">
+          <div class="welcome-row">
+            <div><h1>业务进展，一目了然</h1><p>优先处理临近交付和待回款订单。</p></div>
+            <button class="ghost" id="exportBtn">⇩ 导出订单</button>
+          </div>
+          <div id="metricGrid" class="metric-grid"></div>
+          <div class="dashboard-grid">
+            <article class="panel orders-panel">
+              <div class="panel-head"><div><h3>近期订单</h3><p>按最后更新时间排列</p></div><button class="text-button" data-go="orders">查看全部 →</button></div>
+              <div id="recentOrders" class="table-wrap"></div>
+            </article>
+            <article class="panel todo-panel">
+              <div class="panel-head"><div><h3>需要关注</h3><p>逾期与未完成事项</p></div><span id="todoBadge" class="count-badge">0</span></div>
+              <div id="todoList" class="todo-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="ordersView" class="view-section hidden">
+          <div class="section-toolbar">
+            <div><h1>订单管理</h1><p>跟踪需求、合同、发票、发货与回款。</p></div>
+            <button id="newOrderBtn" class="primary">＋ 新建订单</button>
+          </div>
+          <div class="filter-bar">
+            <div class="search-wrap wide"><span>⌕</span><input id="orderSearch" placeholder="搜索订单、客户、产品或快递单号" /></div>
+            <select id="statusFilter"><option value="all">全部状态</option><option>需求确认中</option><option>合同处理中</option><option>待开票</option><option>待发货</option><option>已发货</option><option>待回款</option><option>已完成</option><option>售后处理中</option></select>
+            <select id="ownerFilter"><option value="all">全部负责人</option></select>
+          </div>
+          <article class="panel table-panel"><div id="ordersTable" class="table-wrap"></div></article>
+        </section>
+
+        <section id="customersView" class="view-section hidden">
+          <div class="section-toolbar"><div><h1>客户管理</h1><p>汇总客户资料、历史订单和未回款金额。</p></div></div>
+          <div id="customerGrid" class="customer-grid"></div>
+        </section>
+
+        <section id="remindersView" class="view-section hidden">
+          <div class="section-toolbar"><div><h1>待办提醒</h1><p>所有临期、逾期和待处理事项。</p></div></div>
+          <article class="panel"><div id="allReminders" class="reminder-list"></div></article>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="orderModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-head"><div><span class="eyebrow">ORDER RECORD</span><h2 id="modalTitle">新建订单</h2></div><button id="closeModal" class="close-btn" aria-label="关闭">×</button></div>
+      <form id="orderForm">
+        <input id="editingId" type="hidden" />
+        <div class="form-section"><h3><span>01</span>客户与需求</h3><div class="form-grid">
+          <label>客户名称 *<input id="customerName" required placeholder="例如：杭州新锐生物科技" /></label>
+          <label>联系人<input id="contact" placeholder="姓名 / 电话" /></label>
+          <label class="span-2">客户需求 *<textarea id="requirement" required placeholder="产品、规格、数量及特殊要求"></textarea></label>
+          <label>订单金额（元）<input id="amount" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+          <label>负责人<input id="owner" value="管理员" /></label>
+          <label>预计交付日期<input id="dueDate" type="date" /></label>
+          <label>优先级<select id="priority"><option>普通</option><option>紧急</option></select></label>
+        </div></div>
+        <div class="form-section"><h3><span>02</span>业务进度</h3><div class="form-grid three">
+          <label>总体状态<select id="status"><option>需求确认中</option><option>合同处理中</option><option>待开票</option><option>待发货</option><option>已发货</option><option>待回款</option><option>已完成</option><option>售后处理中</option><option>已取消</option></select></label>
+          <label>合同<select id="contract"><option>未准备</option><option>起草中</option><option>待客户确认</option><option>待盖章</option><option>已签订</option><option>无需合同</option></select></label>
+          <label>发票<select id="invoice"><option>未申请</option><option>待开票</option><option>已开票</option><option>已寄出</option><option>无需发票</option></select></label>
+          <label>发货<select id="shipping"><option>未备货</option><option>备货中</option><option>待发货</option><option>部分发货</option><option>已发货</option><option>已签收</option><option>无需发货</option></select></label>
+          <label>回款<select id="payment"><option>未付款</option><option>待付款</option><option>部分付款</option><option>已付清</option><option>已退款</option></select></label>
+          <label>已收金额（元）<input id="paidAmount" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+        </div></div>
+        <div class="form-section"><h3><span>03</span>物流与反馈</h3><div class="form-grid">
+          <label>快递公司<input id="carrier" placeholder="顺丰 / 京东 / 德邦等" /></label>
+          <label>快递单号<input id="tracking" placeholder="可填写多个，用逗号分隔" /></label>
+          <label class="span-2">客户反馈<textarea id="feedback" placeholder="满意度、问题描述及处理结果"></textarea></label>
+          <label class="span-2">内部备注<textarea id="notes" placeholder="仅内部可见的补充信息"></textarea></label>
+        </div></div>
+        <div class="modal-actions"><button type="button" id="deleteOrder" class="danger hidden">删除订单</button><div class="spacer"></div><button type="button" id="cancelModal" class="secondary">取消</button><button type="submit" class="primary">保存订单</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
