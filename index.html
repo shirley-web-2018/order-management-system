@@ -81,7 +81,7 @@
           </div>
           <div class="filter-bar">
             <div class="search-wrap wide"><span>⌕</span><input id="orderSearch" placeholder="搜索订单、客户、产品或快递单号" /></div>
-            <select id="statusFilter"><option value="all">全部状态</option><option>需求确认中</option><option>合同处理中</option><option>待开票</option><option>待发货</option><option>已发货</option><option>待回款</option><option>已完成</option><option>售后处理中</option></select>
+            <select id="statusFilter"><option value="all">全部订单</option><option value="__active">进行中</option><option value="__shipping">待发货</option><option value="__payment">待回款</option><option>需求确认中</option><option>合同处理中</option><option>待开票</option><option>已发货</option><option>已完成</option><option>售后处理中</option></select>
             <select id="ownerFilter"><option value="all">全部负责人</option></select>
           </div>
           <article class="panel table-panel"><div id="ordersTable" class="table-wrap"></div></article>
