@@ -6,6 +6,9 @@
   <meta name="description" content="内部客户订单、合同、发票、发货、回款与反馈跟踪系统" />
   <title>订单管理系统</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="bulk-actions.css" />
+  <link rel="stylesheet" href="import-orders.css" />
+  <link rel="stylesheet" href="documents.css" />
 </head>
 <body>
   <section id="loginView" class="login-shell">
@@ -81,12 +84,23 @@
         <section id="ordersView" class="view-section hidden">
           <div class="section-toolbar">
             <div><h1>订单管理</h1><p>跟踪需求、合同、发票、发货与回款。</p></div>
-            <button id="newOrderBtn" class="primary">＋ 新建订单</button>
+            <div class="order-toolbar-actions">
+              <input id="orderFileInput" class="hidden" type="file" accept=".xlsx,.xls,.csv" />
+              <button id="uploadOrdersBtn" class="ghost" type="button">⇧ 批量上传</button>
+              <button id="newOrderBtn" class="primary">＋ 新建订单</button>
+            </div>
           </div>
           <div class="filter-bar">
             <div class="search-wrap wide"><span>⌕</span><input id="orderSearch" placeholder="搜索订单、客户、产品或快递单号" /></div>
             <select id="statusFilter"><option value="all">全部订单</option><option value="__active">进行中</option><option value="__shipping">待发货</option><option value="__payment">待回款</option><option>需求确认中</option><option>合同处理中</option><option>待开票</option><option>已发货</option><option>已完成</option><option>售后处理中</option></select>
             <select id="ownerFilter"><option value="all">全部负责人</option></select>
+          </div>
+          <div id="batchActions" class="batch-actions" aria-live="polite">
+            <span>已选择 <strong id="selectedOrderCount">0</strong> 个订单</span>
+            <div class="batch-action-buttons">
+              <button id="exportSelectedBtn" class="ghost" type="button" disabled>导出所选订单</button>
+              <button id="batchDeleteBtn" class="danger" type="button" disabled>删除所选订单</button>
+            </div>
           </div>
           <article class="panel table-panel"><div id="ordersTable" class="table-wrap"></div></article>
         </section>
@@ -125,6 +139,15 @@
           <label>发货<select id="shipping"><option>未备货</option><option>备货中</option><option>待发货</option><option>部分发货</option><option>已发货</option><option>已签收</option><option>无需发货</option></select></label>
           <label>回款<select id="payment"><option>未付款</option><option>待付款</option><option>部分付款</option><option>已付清</option><option>已退款</option></select></label>
           <label>已收金额（元）<input id="paidAmount" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+        </div><div class="form-grid attachment-grid">
+          <div class="document-upload">
+            <div class="document-upload-head"><div><strong>合同附件</strong><span>支持 PDF、图片、Word、Excel，单个不超过 10 MB</span></div><input id="contractFileInput" class="hidden" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx,.xls,.xlsx" /><button id="addContractFiles" type="button" class="secondary">＋ 上传合同</button></div>
+            <div id="contractDocumentList" class="document-list"></div>
+          </div>
+          <div class="document-upload">
+            <div class="document-upload-head"><div><strong>发票附件</strong><span>支持 PDF、图片、Word、Excel，单个不超过 10 MB</span></div><input id="invoiceFileInput" class="hidden" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx,.xls,.xlsx" /><button id="addInvoiceFiles" type="button" class="secondary">＋ 上传发票</button></div>
+            <div id="invoiceDocumentList" class="document-list"></div>
+          </div>
         </div></div>
         <div class="form-section"><h3><span>03</span>物流与反馈</h3><div class="form-grid">
           <div class="logistics-editor span-2">
@@ -139,7 +162,42 @@
     </div>
   </div>
 
+  <div id="importModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="importModalTitle">
+    <div class="modal import-modal">
+      <div class="modal-head"><div><span class="eyebrow">BATCH IMPORT</span><h2 id="importModalTitle">确认批量上传</h2></div><button id="closeImportModal" class="close-btn" aria-label="关闭">×</button></div>
+      <div class="import-content">
+        <p id="importFileName" class="import-file-name"></p>
+        <div class="import-summary-grid">
+          <div><span>表格记录</span><strong id="importTotalCount">0</strong></div>
+          <div><span>新增订单</span><strong id="importNewCount">0</strong></div>
+          <div><span>覆盖更新</span><strong id="importUpdateCount">0</strong></div>
+          <div class="duplicate"><span>完全重复</span><strong id="importDuplicateCount">0</strong></div>
+        </div>
+        <div id="duplicateNotice" class="import-notice hidden">
+          <strong>发现完全重复的订单内容</strong>
+          <p>可以仍然导入，系统会为重复记录生成新的订单编号；也可以只跳过重复项。</p>
+          <ul id="duplicateExamples"></ul>
+        </div>
+        <div id="invalidNotice" class="import-notice error hidden">
+          <strong id="invalidTitle">部分记录无法导入</strong>
+          <ul id="invalidExamples"></ul>
+        </div>
+      </div>
+      <div class="modal-actions import-actions">
+        <button type="button" id="cancelImport" class="secondary">取消上传</button>
+        <div class="spacer"></div>
+        <button type="button" id="skipDuplicateImport" class="ghost hidden">跳过重复项</button>
+        <button type="button" id="confirmImport" class="primary">确认导入</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast hidden" role="status"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="config.js"></script>
+  <script src="import-utils.js"></script>
+  <script src="document-utils.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

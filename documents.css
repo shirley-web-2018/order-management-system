@@ -1,0 +1,121 @@
+.attachment-grid {
+  margin-top: 4px;
+}
+
+.document-upload {
+  min-width: 0;
+  margin-bottom: 18px;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #f8faff;
+}
+
+.document-upload-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.document-upload-head strong,
+.document-upload-head span {
+  display: block;
+}
+
+.document-upload-head strong {
+  font-size: 14px;
+}
+
+.document-upload-head span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.document-upload-head .secondary {
+  flex: 0 0 auto;
+  padding: 9px 13px;
+  font-size: 13px;
+}
+
+.document-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.document-empty {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.document-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.document-item-name {
+  min-width: 0;
+}
+
+.document-item-name strong,
+.document-item-name span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.document-item-name strong {
+  font-size: 13px;
+}
+
+.document-item-name span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.document-item button {
+  border: 0;
+  border-radius: 8px;
+  padding: 7px 10px;
+  color: var(--blue);
+  background: var(--blue-soft);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.document-item button.remove-pending-file {
+  color: var(--red);
+  background: var(--red-soft);
+}
+
+.pending-file-badge {
+  color: var(--amber);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .document-upload-head {
+    flex-direction: column;
+  }
+
+  .document-upload-head .secondary {
+    width: 100%;
+  }
+
+  .document-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
