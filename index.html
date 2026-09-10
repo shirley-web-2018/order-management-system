@@ -192,12 +192,30 @@
     </div>
   </div>
 
+  <div id="templateModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="templateModalTitle">
+    <div class="modal import-modal">
+      <div class="modal-head"><div><span class="eyebrow">ORDER TEMPLATE</span><h2 id="templateModalTitle">先下载订单模板</h2></div><button id="closeTemplateModal" class="close-btn" aria-label="关闭">×</button></div>
+      <div class="import-content">
+        <div class="import-notice">
+          <strong>系统中暂时没有订单</strong>
+          <p>建议先下载 Excel 模板，按示例填写订单后，再使用批量上传导入系统。</p>
+        </div>
+      </div>
+      <div class="modal-actions import-actions">
+        <button type="button" id="cancelTemplateModal" class="secondary">取消</button>
+        <div class="spacer"></div>
+        <button type="button" id="continueEmptyUpload" class="ghost">已有文件，直接上传</button>
+        <button type="button" id="downloadOrderTemplate" class="primary">下载 Excel 模板</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast hidden" role="status"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="config.js?v=20260909-2"></script>
   <script src="import-utils.js?v=20260909-2"></script>
   <script src="document-utils.js?v=20260909-2"></script>
-  <script src="app.js?v=20260910-2"></script>
+  <script src="app.js?v=20260910-3"></script>
 </body>
 </html>
