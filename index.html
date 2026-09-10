@@ -66,7 +66,6 @@
         <section id="dashboardView" class="view-section">
           <div class="welcome-row">
             <div><h1>业务进展，一目了然</h1><p>优先处理临近交付和待回款订单。</p></div>
-            <button class="ghost" id="exportBtn">⇩ 导出订单</button>
           </div>
           <div id="metricGrid" class="metric-grid"></div>
           <div class="dashboard-grid">
@@ -86,6 +85,7 @@
             <div><h1>订单管理</h1><p>跟踪需求、合同、发票、发货与回款。</p></div>
             <div class="order-toolbar-actions">
               <input id="orderFileInput" class="hidden" type="file" accept=".xlsx,.xls,.csv" />
+              <button class="ghost" id="exportBtn" type="button">⇩ 导出订单</button>
               <button id="uploadOrdersBtn" class="ghost" type="button">⇧ 批量上传</button>
               <button id="newOrderBtn" class="primary">＋ 新建订单</button>
             </div>
@@ -198,6 +198,6 @@
   <script src="config.js?v=20260909-2"></script>
   <script src="import-utils.js?v=20260909-2"></script>
   <script src="document-utils.js?v=20260909-2"></script>
-  <script src="app.js?v=20260909-2"></script>
+  <script src="app.js?v=20260910-1"></script>
 </body>
 </html>

@@ -79,7 +79,7 @@ $('orderForm').onsubmit=async e=>{e.preventDefault();const o=formOrder();const e
 $('deleteOrder').onclick=async()=>{const id=$('editingId').value;if(id&&confirm(`确定删除订单 ${id} 吗？此操作无法撤销。`)){try{await removeSharedOrder(id);closeModal();toast('订单已删除')}catch{toast('删除失败，请稍后重试')}}};
 $('batchDeleteBtn').onclick=async()=>{const ids=[...selectedOrderIds];if(!ids.length)return;if(!confirm(`确定永久删除已选中的 ${ids.length} 个订单吗？此操作无法撤销。`))return;try{await removeSharedOrders(ids);toast(`已删除 ${ids.length} 个订单`)}catch{toast('批量删除失败，请稍后重试')}};
 $('exportSelectedBtn').onclick=()=>{const selected=orders.filter(order=>selectedOrderIds.has(order.id));exportCsv(selected)};
-$('orderSearch').oninput=renderOrders;$('statusFilter').onchange=renderOrders;$('ownerFilter').onchange=renderOrders;$('exportBtn').onclick=()=>{switchView('orders');toast('请勾选需要导出的订单')};
+$('orderSearch').oninput=renderOrders;$('statusFilter').onchange=renderOrders;$('ownerFilter').onchange=renderOrders;$('exportBtn').onclick=()=>toast('请先勾选需要导出的订单，再点击“导出所选订单”');
 $('globalSearch').onkeydown=e=>{if(e.key==='Enter'){switchView('orders');$('orderSearch').value=e.target.value;renderOrders()}};
 $('menuBtn').onclick=()=>document.querySelector('.sidebar').classList.toggle('open');
 $('dateLine').textContent=today.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
